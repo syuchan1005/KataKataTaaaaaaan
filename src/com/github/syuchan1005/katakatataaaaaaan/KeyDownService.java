@@ -27,27 +27,6 @@ import org.jetbrains.annotations.NotNull;
 import sun.awt.image.ToolkitImage;
 
 public class KeyDownService implements ProjectComponent {
-	/*private DocumentListener documentListener = new DocumentListener() {
-		@Override
-		public void documentChanged(DocumentEvent event) {
-			VirtualFile file = FileDocumentManager.getInstance().getFile(event.getDocument());
-			assert file != null;
-			FileEditor editor = FileEditorManager.getInstance(project).getSelectedEditor(file);
-			assert editor != null;
-			EditorEx editorEx = EditorUtil.getEditorEx(editor);
-			Point cursorAbsoluteLocation = editorEx.visualPositionToXY(editorEx.getCaretModel().getVisualPosition());
-			Point editorLocation = editorEx.getComponent().getLocationOnScreen();
-			Point editorContentLocation = editorEx.getContentComponent().getLocationOnScreen();
-			Point popupLocation = new Point(editorContentLocation.x + cursorAbsoluteLocation.x,
-					editorLocation.y + cursorAbsoluteLocation.y - editorEx.getScrollingModel().getVerticalScrollOffset());
-			JRootPane rootPane = SwingUtilities.getRootPane(editorEx.getComponent());
-			CharSequence newFragment = event.getNewFragment();
-			if (newFragment.length() == 0) return;
-			addImage(newFragment.charAt(0) == '\n', rootPane.getLayeredPane(),
-					new Point(popupLocation.x - rootPane.getLocationOnScreen().x, popupLocation.y - rootPane.getLocationOnScreen().y));
-		}
-	};*/
-
 	@NotNull
 	private static Map<String, ToolkitImage> imageMap = new HashMap<>();
 
@@ -71,29 +50,34 @@ public class KeyDownService implements ProjectComponent {
 
 	private void addImage(boolean isEnter, JLayeredPane pane, Point caretPosition) {
 		ToolkitImage image = imageMap.get((isEnter ? "tan_" : "kata_") + rand(1, 4));
-		BufferedImage img = processImage(image, isEnter ? rand(80, 100) : rand(10, 20));
+		BufferedImage img = processImage(image, isEnter ? rand(80, 100) : rand(10, 20), 255);
 		JLabel label = new JLabel(new ImageIcon(img));
 		int[] beforePos = new int[]{rand(-10, 10), rand(-10, 10)};
 		Rectangle rectangle = new Rectangle(caretPosition.x + beforePos[0], caretPosition.y + beforePos[1], img.getWidth(), img.getHeight());
 		label.setBounds(rectangle);
 		pane.add(label);
 		pane.setLayer(label, JLayeredPane.PALETTE_LAYER);
-		/* x, y, width */
-		double[] afterData = new double[]{rand(-40, 40), rand(-40, 40), isEnter ? rand(30, 50) : rand(10, 20), 1};
+		double[] afterData = new double[]{rand(-40, 40) - beforePos[0], rand(-40, 40) - beforePos[1], isEnter ? rand(30, 50) : rand(10, 20), 255};
 		animate(pane, (count) -> {
-			for (int i = 0; i < 3; i++) {
+			for (int i = 0; i < afterData.length; i++) {
 				afterData[i] /= count;
 			}
 		}, (i) -> {
-			BufferedImage processImage = processImage(image, (int) (img.getWidth() + (afterData[2] * i)));
+			BufferedImage processImage = processImage(image, (int) (img.getWidth() + (afterData[2] * i)), 255 - (int) (afterData[3] * i));
 			label.setIcon(new ImageIcon(processImage));
 			label.setBounds((int) (rectangle.x + afterData[0] * i), (int) (rectangle.y + afterData[1] * i), processImage.getWidth(), processImage.getHeight());
 		}, () -> pane.remove(label), 50, 500);
 	}
 
-	private static BufferedImage processImage(ToolkitImage image, int width) {
+	private static BufferedImage processImage(ToolkitImage image, int width, int alpha) {
 		double scale = (double) width / image.getWidth();
-		return (BufferedImage) ImageUtil.scaleImage(image, scale == 1 ? 0.99 : scale);
+		BufferedImage scaleImage = (BufferedImage) ImageUtil.scaleImage(image, scale == 1 ? 0.99 : scale);
+		for (int x = 0; x < scaleImage.getWidth(); x++) {
+			for (int y = 0; y < scaleImage.getHeight(); y++) {
+				scaleImage.setRGB(x, y, scaleImage.getRGB(x, y) & ((alpha << 24) | 0x00FFFFFF));
+			}
+		}
+		return scaleImage;
 	}
 
 	private static void animate(JComponent component, Consumer<Integer> init, Consumer<Integer> animationFrame, Runnable finish, int perMills, int finishMills) {
