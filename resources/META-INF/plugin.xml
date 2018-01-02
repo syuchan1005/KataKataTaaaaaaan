@@ -5,7 +5,10 @@
   <vendor url="https://twitter.com/syu_chan_1005" email="syuchan.dev@gmail.com">syuchan1005</vendor>
 
   <description><![CDATA[
-      <a href="https://qiita.com/ampersand/items/3ef94ebe9cba8c07a157">こちら</a>のIntelliJ IDEA版です
+      This plugin is IntelliJ IDEA version of <a href="https://qiita.com/ampersand/items/3ef94ebe9cba8c07a157">article</a>.
+
+      <em>How to use?</em>
+      Hit a keyboard! (in Editor)
     ]]></description>
 
   <change-notes><![CDATA[

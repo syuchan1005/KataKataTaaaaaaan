@@ -1,45 +1,22 @@
 package com.github.syuchan1005.katakatataaaaaaan;
 
 import com.intellij.openapi.components.ProjectComponent;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.event.DocumentEvent;
-import com.intellij.openapi.editor.event.DocumentListener;
-import com.intellij.openapi.editor.ex.EditorEx;
-import com.intellij.openapi.editor.ex.util.EditorUtil;
 import com.intellij.openapi.editor.impl.EditorComponentImpl;
 import com.intellij.openapi.editor.impl.EditorImpl;
-import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.fileEditor.FileEditor;
-import com.intellij.openapi.fileEditor.FileEditorManager;
-import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
-import com.intellij.openapi.fileEditor.FileEditorManagerListener;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ImageLoader;
-import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.ui.ImageUtil;
 import java.awt.AWTEvent;
-import java.awt.AlphaComposite;
-import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Random;
 import java.util.function.Consumer;
-import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -111,9 +88,7 @@ public class KeyDownService implements ProjectComponent {
 			BufferedImage processImage = processImage(image, (int) (img.getWidth() + (afterData[2] * i)));
 			label.setIcon(new ImageIcon(processImage));
 			label.setBounds((int) (rectangle.x + afterData[0] * i), (int) (rectangle.y + afterData[1] * i), processImage.getWidth(), processImage.getHeight());
-		}, () -> {
-			pane.remove(label);
-		}, 50, 500);
+		}, () -> pane.remove(label), 50, 500);
 	}
 
 	private static BufferedImage processImage(ToolkitImage image, int width) {
@@ -142,12 +117,14 @@ public class KeyDownService implements ProjectComponent {
 	}
 
 	private static Random random = new Random();
+
 	private static int rand(int min, int max) {
 		return random.nextInt(max - min + 1) + min;
 	}
 
 
 	private List<Character> escapes = Arrays.asList('\t', '\b', '\n', '\r', '\f', '\'');
+
 	@Override
 	public void projectOpened() {
 		Toolkit.getDefaultToolkit().addAWTEventListener(event -> {
