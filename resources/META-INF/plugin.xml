@@ -1,7 +1,7 @@
 <idea-plugin>
   <id>com.github.syuchan1005.katakatataaaaaaan</id>
   <name>KataKataTaaaaaaan</name>
-  <version>1.1</version>
+  <version>1.2</version>
   <vendor url="https://twitter.com/syu_chan_1005" email="syuchan.dev@gmail.com">syuchan1005</vendor>
 
   <description><![CDATA[
@@ -12,19 +12,15 @@
     ]]></description>
 
   <change-notes><![CDATA[
-      alpha animation.
+      Fix image controls
     ]]>
   </change-notes>
 
   <idea-version since-build="145.0"/>
 
-  <extensions defaultExtensionNs="com.intellij">
-    <projectService serviceImplementation="com.github.syuchan1005.katakatataaaaaaan.KeyDownService"/>
-  </extensions>
-
-  <project-components>
+  <application-components>
     <component>
       <implementation-class>com.github.syuchan1005.katakatataaaaaaan.KeyDownService</implementation-class>
     </component>
-  </project-components>
+  </application-components>
 </idea-plugin>
